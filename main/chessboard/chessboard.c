@@ -8,16 +8,6 @@
 #define TEMPLATE_LENGTH     (CHESSBOARD_MAX_SIZE - 1) * 4 + 1
 
 /**
- * @brief the enum type of unit in chessboard.
- */
-typedef enum _chessboard_unit_man
-{
-    Null = 0,
-    White,
-    Black,
-} chessboard_unit_man;
-
-/**
  * @brief the coord of unit in chessboard.
  */
 typedef struct _chessboard_unit_coord
@@ -53,8 +43,6 @@ typedef struct _chessboard_object
  * @brief the chessboard object.
  */
 static chessboard_object chessboard;
-
-void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
 
 char chessboard_initialize(const unsigned char size)
 {
@@ -114,17 +102,17 @@ char chessboard_initialize(const unsigned char size)
 void chessboard_print(void)
 {
     char template[TEMPLATE_LENGTH] = "";
-    printf("┌ ");
+    printf("┌  ");
     for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
     {
-        printf("%d───", index_x);
+        printf("%-4d", index_x);
     }
     printf("x\n");
     for (unsigned char index_y = 0; index_y < (chessboard.size * 2 - 1); ++index_y)
     {
         if (1 == index_y % 2)
         {
-            printf("| ");
+            printf("   ");
             for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
             {
                 printf("|   ");
@@ -134,7 +122,7 @@ void chessboard_print(void)
         else
         {
             memset(template, '\0', TEMPLATE_LENGTH);
-            printf("%d ", index_y / 2);
+            printf("%-2d ", index_y / 2);
             if (0 == index_y)
             {
                 for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
@@ -145,12 +133,12 @@ void chessboard_print(void)
                         {
                         case White:
                         {
-                            strcat(template, "●──");
+                            strcat(template, "● ─");
                         }
                         break;
                         case Black:
                         {
-                            strcat(template, "○──");
+                            strcat(template, "○ ─");
                         }
                         break;
                         default:
@@ -215,12 +203,12 @@ void chessboard_print(void)
                         {
                         case White:
                         {
-                            strcat(template, "●──");
+                            strcat(template, "● ─");
                         }
                         break;
                         case Black:
                         {
-                            strcat(template, "○──");
+                            strcat(template, "○ ─");
                         }
                         break;
                         default:
@@ -246,7 +234,7 @@ void chessboard_print(void)
                         break;
                         default:
                         {
-                            strcat(template, "─┴");
+                            strcat(template, "─┘");
                         }
                         break;
                         }
@@ -285,12 +273,12 @@ void chessboard_print(void)
                         {
                         case White:
                         {
-                            strcat(template, "●──");
+                            strcat(template, "● ─");
                         }
                         break;
                         case Black:
                         {
-                            strcat(template, "○──");
+                            strcat(template, "○ ─");
                         }
                         break;
                         default:
@@ -316,7 +304,7 @@ void chessboard_print(void)
                         break;
                         default:
                         {
-                            strcat(template, "─┼");
+                            strcat(template, "─┤");
                         }
                         break;
                         }
@@ -348,4 +336,7 @@ void chessboard_print(void)
             printf("%s", template);
         }
     }
+    printf("y\n");
 }
+
+void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
