@@ -220,11 +220,4 @@ void chessboard_print(void)
             printf("%s", template);
         }
     }
-
-    // printf("┌ 0───1───2───x\n");
-    // printf("0 ┌───┬───┐\n");
-    // printf("| |   |   |\n");
-    // printf("1 └───┼───┘\n");
-    // printf("|\n");
-    // printf("y\n");
 }
