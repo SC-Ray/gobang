@@ -207,15 +207,143 @@ void chessboard_print(void)
             }
             else if ((chessboard.size - 1) == (index_y / 2))
             {
-                /* code */
+                for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
+                {
+                    if (0 == index_x)
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, "●──");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, "○──");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "└──");
+                        }
+                        break;
+                        }
+                    }
+                    else if ((chessboard.size - 1) == index_x)
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, " ●");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, " ○");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "─┴");
+                        }
+                        break;
+                        }
+                    }
+                    else
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, " ● ─");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, " ○ ─");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "─┴──");
+                        }
+                        break;
+                        }
+                    }
+                }
+                strcat(template, "\n");
             }
             else
             {
-                // printf("%d ", index_y / 2);
-                // for (unsigned char index_x = 0;; ++index_x)
-                // {
-                //     printf("%c");
-                // }
+                for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
+                {
+                    if (0 == index_x)
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, "●──");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, "○──");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "├──");
+                        }
+                        break;
+                        }
+                    }
+                    else if ((chessboard.size - 1) == index_x)
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, " ●");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, " ○");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "─┼");
+                        }
+                        break;
+                        }
+                    }
+                    else
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, " ● ─");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, " ○ ─");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "─┼──");
+                        }
+                        break;
+                        }
+                    }
+                }
+                strcat(template, "\n");
             }
             printf("%s", template);
         }
