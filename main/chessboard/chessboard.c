@@ -19,8 +19,8 @@ typedef enum _chessboard_unit_man
  */
 typedef struct _chessboard_unit_coord
 {
-    unsigned char x;
     unsigned char y;
+    unsigned char x;
 } chessboard_unit_coord;
 
 /**
@@ -33,9 +33,8 @@ typedef char chessboard_unit_symbol;
  */
 typedef struct _chessboard_unit
 {
-    chessboard_unit_man man;
     chessboard_unit_coord coord;
-    chessboard_unit_symbol symbol;
+    chessboard_unit_man man;
 } chessboard_unit;
 
 /**
@@ -51,6 +50,8 @@ typedef struct _chessboard_object
  * @brief the chessboard object.
  */
 static chessboard_object chessboard;
+
+void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
 
 char chessboard_initialize(const unsigned char size)
 {
@@ -70,15 +71,38 @@ char chessboard_initialize(const unsigned char size)
         return -2;
     }
 
-    // malloc the chessboard in the bytes
-    chessboard.data = malloc(chessboard.size = (size * size * sizeof(chessboard_unit)));
-
-    // initialization failed
+    // malloc the chessboard
+    chessboard.data = malloc(sizeof(chessboard_unit *) * size);
     if (NULL == chessboard.data)
     {
-        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initialization failed");
+        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard malloc failed");
         return -3;
     }
+    for (unsigned char index = 0; index < size; ++index)
+    {
+        chessboard.data[index] = malloc(sizeof(chessboard_unit) * size);
+        if (NULL == chessboard.data[index])
+        {
+            LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard malloc failed");
+            return -3;
+        }
+    }
+    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard malloc successfully");
+
+    // data initialize
+    for (unsigned char index_y = 0; index_y < size; ++index_y)
+    {
+        for (unsigned char index_x = 0; index_x < size; ++index_x)
+        {
+            LOG_MESSAGE("[%s: %d] %s y: %d x: %d\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initialize", index_y, index_x);
+            chessboard.data[index_y][index_x].coord.y = index_y;
+            chessboard.data[index_y][index_x].coord.x = index_x;
+            chessboard.data[index_y][index_x].man = Null;
+        }
+    }
+
+    // size initialize
+    chessboard.size = size;
 
     LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initialize successfully");
     return 0; // initialize successfully
