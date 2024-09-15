@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/gobang.dir/main/chessboard/chessboard.c.o CMakeFiles/gobang.dir/main/main.c.o CMakeFiles/gobang.dir/main/parser/parser.c.o -o bin/gobang 
