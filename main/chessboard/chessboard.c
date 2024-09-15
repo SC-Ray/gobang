@@ -4,6 +4,9 @@
 
 #include <stdlib.h>
 
+#define CHESSBOARD_MAX_SIZE 32
+#define TEMPLATE_LENGTH     (CHESSBOARD_MAX_SIZE - 1) * 4 + 1
+
 /**
  * @brief the enum type of unit in chessboard.
  */
@@ -57,10 +60,10 @@ char chessboard_initialize(const unsigned char size)
 {
     LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initializing");
 
-    // the size can not be bigger than 32
-    if (size > 32)
+    // the size can not be bigger than CHESSBOARD_MAX_SIZE
+    if (size > CHESSBOARD_MAX_SIZE)
     {
-        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard size is out of range 5-32");
+        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard size is out of range 5-CHESSBOARD_MAX_SIZE");
         return -1;
     }
 
@@ -110,10 +113,118 @@ char chessboard_initialize(const unsigned char size)
 
 void chessboard_print(void)
 {
-    printf("┌ 0───1───2───x\n");
-    printf("0 ┌───┬───┐\n");
-    printf("| |   |   |\n");
-    printf("1 └───┼───┘\n");
-    printf("|\n");
-    printf("y\n");
+    char template[TEMPLATE_LENGTH] = "";
+    printf("┌ ");
+    for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
+    {
+        printf("%d───", index_x);
+    }
+    printf("x\n");
+    for (unsigned char index_y = 0; index_y < (chessboard.size * 2 - 1); ++index_y)
+    {
+        if (1 == index_y % 2)
+        {
+            printf("| ");
+            for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
+            {
+                printf("|   ");
+            }
+            printf("\n");
+        }
+        else
+        {
+            memset(template, '\0', TEMPLATE_LENGTH);
+            printf("%d ", index_y / 2);
+            if (0 == index_y)
+            {
+                for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
+                {
+                    if (0 == index_x)
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, "●──");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, "○──");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "┌──");
+                        }
+                        break;
+                        }
+                    }
+                    else if ((chessboard.size - 1) == index_x)
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, " ●");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, " ○");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "─┐");
+                        }
+                        break;
+                        }
+                    }
+                    else
+                    {
+                        switch (chessboard.data[index_y / 2][index_x].man)
+                        {
+                        case White:
+                        {
+                            strcat(template, " ● ─");
+                        }
+                        break;
+                        case Black:
+                        {
+                            strcat(template, " ○ ─");
+                        }
+                        break;
+                        default:
+                        {
+                            strcat(template, "─┬──");
+                        }
+                        break;
+                        }
+                    }
+                }
+                strcat(template, "\n");
+            }
+            else if ((chessboard.size - 1) == (index_y / 2))
+            {
+                /* code */
+            }
+            else
+            {
+                // printf("%d ", index_y / 2);
+                // for (unsigned char index_x = 0;; ++index_x)
+                // {
+                //     printf("%c");
+                // }
+            }
+            printf("%s", template);
+        }
+    }
+
+    // printf("┌ 0───1───2───x\n");
+    // printf("0 ┌───┬───┐\n");
+    // printf("| |   |   |\n");
+    // printf("1 └───┼───┘\n");
+    // printf("|\n");
+    // printf("y\n");
 }
