@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "system_error": "cpp",
+        "debug.h": "c",
+        "string": "c",
+        "main.h": "c"
     }
 }
