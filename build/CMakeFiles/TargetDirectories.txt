@@ -1,0 +1,3 @@
+/home/scray/workspace/gobang/build/CMakeFiles/gobang.dir
+/home/scray/workspace/gobang/build/CMakeFiles/edit_cache.dir
+/home/scray/workspace/gobang/build/CMakeFiles/rebuild_cache.dir
