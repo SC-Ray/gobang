@@ -28,3 +28,10 @@ void chessboard_print();
  * @brief set the unit of chessboard.
  */
 void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man);
+
+/**
+ * @brief check chessboard to determine whether the conditions for victory.
+ * @return return -1 if no victory.
+ * @return return 0 if victory.
+ */
+char chessboard_determine(const unsigned char y, const unsigned char x);
