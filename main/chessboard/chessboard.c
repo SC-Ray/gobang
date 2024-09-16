@@ -44,7 +44,7 @@ typedef struct _chessboard_object
  */
 static chessboard_object chessboard;
 
-char chessboard_initialize(const unsigned char size)
+int chessboard_initialize(const unsigned char size)
 {
     LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initializing");
 
@@ -341,7 +341,7 @@ void chessboard_print(void)
 
 void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
 
-char chessboard_determine(const unsigned char y, const unsigned char x)
+int chessboard_determine(const unsigned char y, const unsigned char x)
 {
     int i, j;
     for (i = 0; i < chessboard.size; ++i)
