@@ -17,7 +17,7 @@ typedef enum _chessboard_unit_man
  * @return return -3 if initialization failed.
  * @return return 0 if initialize successfully.
  */
-char chessboard_initialize(const unsigned char size);
+int chessboard_initialize(const unsigned char size);
 
 /**
  * @brief print chessboad.
@@ -31,7 +31,8 @@ void chessboard_set_unit(const unsigned char y, const unsigned char x, const che
 
 /**
  * @brief check chessboard to determine whether the conditions for victory.
- * @return return -1 if no victory.
+ * @return return -2 if no victory.
+ * @return return -1 if the position is empty.
  * @return return 0 if victory.
  */
-char chessboard_determine(const unsigned char y, const unsigned char x);
+int chessboard_determine(const unsigned char y, const unsigned char x);
