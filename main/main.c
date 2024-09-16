@@ -14,7 +14,7 @@ int main(const int argument_count, char *const argument_value[])
     {
         for (unsigned char index_x = 0; index_x < size; ++index_x)
         {
-            chessboard_set_unit(index_y, index_x, White);
+            chessboard_set_unit(index_y, index_x, Null);
         }
     }
     chessboard_print();

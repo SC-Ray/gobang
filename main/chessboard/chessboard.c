@@ -341,4 +341,59 @@ void chessboard_print(void)
 
 void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
 
-char chessboard_determine(const unsigned char y, const unsigned char x) {}
+char chessboard_determine(const unsigned char y, const unsigned char x)
+{
+    int i, j;
+    for (i = 0; i < chessboard.size; ++i)
+    {
+        for (j = 0; j < chessboard.size; ++j)
+        {
+            if (chessboard.data[i][j].man = Null)
+            {
+                continue;
+            }
+        }
+    }
+
+    if (i < chessboard.size - 4)
+    {
+        if (chessboard.data[i][j].man == chessboard.data[i + 1][j].man && chessboard.data[i][j].man == chessboard.data[i + 2][j].man &&
+            chessboard.data[i][j].man == chessboard.data[i + 3][j].man && chessboard.data[i][j].man == chessboard.data[i + 4][j].man &&
+            chessboard.data[i][j].man == chessboard.data[i + 5][j].man)
+        {
+            return 0;
+        }
+    }
+
+    if (j < chessboard.size - 4)
+    {
+        if (chessboard.data[i][j].man == chessboard.data[i][j + 1].man && chessboard.data[i][j].man == chessboard.data[i][j + 2].man &&
+            chessboard.data[i][j].man == chessboard.data[i][j + 3].man && chessboard.data[i][j].man == chessboard.data[i][j + 4].man &&
+            chessboard.data[i][j].man == chessboard.data[i][j + 5].man)
+        {
+            return 0;
+        }
+    }
+
+    if (i < chessboard.size - 4 && j < chessboard.size - 4)
+    {
+        if (chessboard.data[i][j].man == chessboard.data[i + 1][j + 1].man && chessboard.data[i][j].man == chessboard.data[i + 2][j + 2].man &&
+            chessboard.data[i][j].man == chessboard.data[i + 3][j + 3].man && chessboard.data[i][j].man == chessboard.data[i + 4][j + 4].man &&
+            chessboard.data[i][j].man == chessboard.data[i + 5][j + 5].man)
+        {
+            return 0;
+        }
+    }
+
+    if (i > 4, j < chessboard.size - 4)
+    {
+        if (chessboard.data[i][j].man == chessboard.data[i - 1][j + 1].man && chessboard.data[i][j].man == chessboard.data[i - 2][j + 2].man &&
+            chessboard.data[i][j].man == chessboard.data[i - 3][j + 3].man && chessboard.data[i][j].man == chessboard.data[i - 4][j + 4].man &&
+            chessboard.data[i][j].man == chessboard.data[i - 5][j + 5].man)
+        {
+            return 0;
+        }
+    }
+
+    return Null;
+}
