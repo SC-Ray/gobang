@@ -101,7 +101,7 @@ int chessboard_initialize(const unsigned char size)
 
 void chessboard_print(void)
 {
-    char template[TEMPLATE_LENGTH] = "";
+    static char template[TEMPLATE_LENGTH];
     printf("┌  ");
     for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
     {
