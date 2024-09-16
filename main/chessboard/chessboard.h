@@ -32,7 +32,7 @@ void chessboard_set_unit(const unsigned char y, const unsigned char x, const che
 /**
  * @brief check chessboard to determine whether the conditions for victory.
  * @return return -2 if no victory.
- * @return return -1 if the position is empty.
+ * @return return -1 if the positon is empty.
  * @return return 0 if victory.
  */
 int chessboard_determine(const unsigned char y, const unsigned char x);
