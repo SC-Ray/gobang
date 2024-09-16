@@ -99,9 +99,9 @@ int chessboard_initialize(const unsigned char size)
     return 0; // initialize successfully
 }
 
-void chessboard_print(void)
+void chessboard_print()
 {
-    char template[TEMPLATE_LENGTH] = "";
+    static char template[TEMPLATE_LENGTH];
     printf("┌  ");
     for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
     {
@@ -350,11 +350,12 @@ int chessboard_determine(const unsigned char y, const unsigned char x)
     }
 
     //'\'
+    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "\\");
     int count = 1;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_y = y + index;
-        int coord_x = x + index;
+        int coord_y = y - index;
+        int coord_x = x - index;
         if (coord_y < 0 || coord_x < 0)
         {
             break;
@@ -363,16 +364,20 @@ int chessboard_determine(const unsigned char y, const unsigned char x)
         {
             ++count;
         }
+        else
+        {
+            break;
+        }
     }
-    for (unsigned char index = 1; index < 5;)
+    for (unsigned char index = 1; index < 5; ++index)
     {
         if (5 == count)
         {
             return 0;
         }
 
-        int coord_y = y - index;
-        int coord_x = x - index;
+        int coord_y = y + index;
+        int coord_x = x + index;
         if (coord_y > (chessboard.size - 1) || coord_x > (chessboard.size - 1))
         {
             break;
@@ -381,64 +386,136 @@ int chessboard_determine(const unsigned char y, const unsigned char x)
         {
             ++count;
         }
+        else
+        {
+            break;
+        }
+    }
+
+    //'/'
+    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "/");
+    count = 1;
+    for (unsigned char index = 1; index < 5; ++index)
+    {
+        int coord_y = y - index;
+        int coord_x = x + index;
+        if (coord_y < 0 || coord_x > (chessboard.size - 1))
+        {
+            break;
+        }
+        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        {
+            ++count;
+        }
+        else
+        {
+            break;
+        }
+    }
+    for (unsigned char index = 1; index < 5; ++index)
+    {
+        if (count == 5)
+        {
+            return 0;
+        }
+        int coord_x = x - index;
+        int coord_y = y + index;
+        if (coord_x < 0 || coord_y > (chessboard.size - 1))
+        {
+            break;
+        }
+        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        {
+            ++count;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    //"-"
+    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "-");
+    count = 1;
+    for (unsigned char index = 1; index < 5; ++index)
+    {
+        int coord_y = y;
+        int coord_x = x - index;
+        if (coord_x < 0)
+        {
+            break;
+        }
+        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        {
+            ++count;
+        }
+        else
+        {
+            break;
+        }
+    }
+    for (unsigned char index = 1; index < 5; ++index)
+    {
+        int coord_y = y;
+        int coord_x = x + index;
+
+        if (coord_x > chessboard.size - 1)
+        {
+            break;
+        }
+        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        {
+            ++count;
+        }
+        if (count == 5)
+        {
+            return 0;
+        }
+    }
+
+    //'|'
+    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "|");
+    count = 1;
+    for (unsigned char index = 1; index < 5; ++index)
+    {
+        int coord_x = x;
+        int coord_y = y - index;
+        LOG_MESSAGE("[%s: %d] %d\n", GET_FILE_NAME(__FILE__), __LINE__, index);
+        if (coord_y < 0)
+        {
+            break;
+        }
+        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        {
+            ++count;
+        }
+        else
+        {
+            break;
+        }
+        if (count == 5)
+        {
+            return 0;
+        }
+    }
+    for (unsigned char index = 1; index < 5; ++index)
+    {
+        int coord_y = y + index;
+        int crood_x = x;
+
+        if (coord_y > chessboard.size - 1)
+        {
+            break;
+        }
+        if (chessboard.data[coord_y][crood_x].man == base_unit->man)
+        {
+            ++count;
+        }
+        if (count == 5)
+        {
+            return 0;
+        }
     }
 
     return -2;
 }
-
-// int chessboard_determine(const unsigned char y, const unsigned char x)
-// {
-
-//     int i = y;
-//     int j = x;
-
-//     if (chessboard.data[y][x].man == Null)
-//     {
-//         return -1;
-//     }
-//     else
-//     {
-//         if (i < chessboard.size - 4)
-//         {
-//             if (chessboard.data[i][j].man == chessboard.data[i + 1][j].man && chessboard.data[i][j].man == chessboard.data[i + 2][j].man &&
-//                 chessboard.data[i][j].man == chessboard.data[i + 3][j].man && chessboard.data[i][j].man == chessboard.data[i + 4][j].man &&
-//                 chessboard.data[i][j].man == chessboard.data[i + 5][j].man)
-//             {
-//                 return 0;
-//             }
-//         }
-
-//         if (j < chessboard.size - 4)
-//         {
-//             if (chessboard.data[i][j].man == chessboard.data[i][j + 1].man && chessboard.data[i][j].man == chessboard.data[i][j + 2].man &&
-//                 chessboard.data[i][j].man == chessboard.data[i][j + 3].man && chessboard.data[i][j].man == chessboard.data[i][j + 4].man &&
-//                 chessboard.data[i][j].man == chessboard.data[i][j + 5].man)
-//             {
-//                 return 0;
-//             }
-//         }
-
-//         if (i < chessboard.size - 4 && j < chessboard.size - 4)
-//         {
-//             if (chessboard.data[i][j].man == chessboard.data[i + 1][j + 1].man && chessboard.data[i][j].man == chessboard.data[i + 2][j +
-//             2].man &&
-//                 chessboard.data[i][j].man == chessboard.data[i + 3][j + 3].man && chessboard.data[i][j].man == chessboard.data[i + 4][j +
-//                 4].man && chessboard.data[i][j].man == chessboard.data[i + 5][j + 5].man)
-//             {
-//                 return 0;
-//             }
-//         }
-
-//         if (i > 4 && j < chessboard.size - 4)
-//         {
-//             if (chessboard.data[i][j].man == chessboard.data[i - 1][j + 1].man && chessboard.data[i][j].man == chessboard.data[i - 2][j +
-//             2].man &&
-//                 chessboard.data[i][j].man == chessboard.data[i - 3][j + 3].man && chessboard.data[i][j].man == chessboard.data[i - 4][j +
-//                 4].man && chessboard.data[i][j].man == chessboard.data[i - 5][j + 5].man)
-//             {
-//                 return 0;
-//             }
-//         }
-//     }
-//     return -2;
-// }
