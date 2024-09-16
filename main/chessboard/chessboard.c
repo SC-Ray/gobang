@@ -340,3 +340,5 @@ void chessboard_print(void)
 }
 
 void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
+
+char chessboard_determine(const unsigned char y, const unsigned char x) {}
