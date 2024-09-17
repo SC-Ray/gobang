@@ -25,9 +25,24 @@ int chessboard_initialize(const unsigned char size);
 void chessboard_print();
 
 /**
+ * @brief judge the position is out of range.
+ * @return return ((1 << 1) | (1 << 0)) if the x and y is out of range.
+ * @return return (1 << 1) if the x is out of range.
+ * @return return (1 << 0) if the y is out of range.
+ * @return return 0 if the position is in the range.
+ */
+int chessboard_judge_range(const char y, const char x);
+
+/**
  * @brief set the unit of chessboard.
  */
 void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man);
+
+/**
+ * @brief get the man of unit.
+ * @return get the type of man.
+ */
+chessboard_unit_man chessboard_get_unit_man(const unsigned char y, const unsigned char x);
 
 /**
  * @brief check chessboard to determine whether the conditions for victory.

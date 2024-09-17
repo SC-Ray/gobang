@@ -339,7 +339,24 @@ void chessboard_print()
     printf("y\n");
 }
 
+int chessboard_judge_range(const char y, const char x)
+{
+    int return_value = 0;
+    if (y > chessboard.size - 1 || y < 0)
+    {
+        return_value = return_value | (1 << 0);
+        return_value |= (1 << 0);
+    }
+    if (x > chessboard.size - 1 || x < 0)
+    {
+        return_value |= (1 << 1);
+    }
+    return return_value;
+}
+
 void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
+
+chessboard_unit_man chessboard_get_unit_man(const unsigned char y, const unsigned char x) { return chessboard.data[y][x].man; }
 
 int chessboard_determine(const unsigned char y, const unsigned char x)
 {

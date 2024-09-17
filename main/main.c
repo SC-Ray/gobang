@@ -19,33 +19,74 @@ int main(const int argument_count, char *const argument_value[])
         {
             printf("turn to black side play chess\n");
             printf("(y x 2)\n");
-            scanf("%d %d %d", &y, &x, &man);
-            if (y > size - 1 || x > size - 1)
+
+            while (1)
             {
-                printf("You have exceeded the maximum range,please print again!\n");
                 scanf("%d %d %d", &y, &x, &man);
-                chessboard_set_unit(y, x, man);
+                if (chessboard_judge_range == (1 << 1) | (1 << 0))
+                {
+                    printf("x and y is out of range,please input again!\n");
+
+                    continue;
+                }
+                else if (chessboard_judge_range == (1 << 1))
+                {
+                    printf("x is out of range,please input again!\n");
+
+                    continue;
+                }
+                else if (chessboard_judge_range == (1 << 0))
+                {
+                    printf("y is out of range,please input again!\n");
+
+                    continue;
+                }
+                else if (chessboard_get_unit_man != 0)
+                {
+                    printf("There are chess pieces in this place\n");
+                    continue;
+                }
             }
-            else
-            {
-                chessboard_set_unit(y, x, man);
-            }
+            break;
+
+            chessboard_set_unit(y, x, man);
+
+            printf("%d\n", chessboard_get_unit_man(y, x));
         }
         else
         {
             printf("turn to while side play chess\n");
             printf("(y x 1)\n");
-            scanf("%d %d %d", &y, &x, &man);
-            if (y > size - 1 || x > size - 1)
+            while (1)
             {
-                printf("You have exceeded the maximum range,please print again!\n");
                 scanf("%d %d %d", &y, &x, &man);
-                chessboard_set_unit(y, x, man);
+                if (chessboard_judge_range == (1 << 1) | (1 << 0))
+                {
+                    printf("x and y is out of range,please input again!\n");
+
+                    continue;
+                }
+                else if (chessboard_judge_range == (1 << 1))
+                {
+                    printf("x is out of range,please input again!\n");
+
+                    continue;
+                }
+                else if (chessboard_judge_range == (1 << 0))
+                {
+                    printf("y is out of range,please input again!\n");
+
+                    continue;
+                }
+                else if (chessboard_get_unit_man != 0)
+                {
+                    printf("There are chess pieces in this place\n");
+                    continue;
+                }
             }
-            else
-            {
-                chessboard_set_unit(y, x, man);
-            }
+            break;
+            chessboard_set_unit(y, x, man);
+            printf("%d\n", chessboard_get_unit_man(y, x));
         }
     }
 
