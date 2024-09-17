@@ -1,113 +1,98 @@
-#include "chessboard.h"
+#include "chessboard_class_private.h"
 #include "debug.h"
 #include "main.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @brief whether enable debug for this file if have enable debug.
+ */
+#ifdef DEBUG
+#undef DEBUG
+#endif
+#define DEBUG               1
+
+/**
+ * @brief the min size of chessboard.
+ */
+#define CHESSBOARD_MIN_SIZE 5
+
+/**
+ * @brief the max size of chessboard.
+ */
 #define CHESSBOARD_MAX_SIZE 32
-#define TEMPLATE_LENGTH     (CHESSBOARD_MAX_SIZE - 1) * 4 + 1
 
 /**
- * @brief the coord of unit in chessboard.
+ * @brief the length of template char array.
  */
-typedef struct _chessboard_unit_coord
+#define TEMPLATE_LENGTH     ((CHESSBOARD_MAX_SIZE - 1) * 4 + 1)
+
+/**
+ * @brief the static chessboard.
+ */
+static struct _chessboard_object chessboard = {NULL, 0};
+
+char chessboard_initialize_data(const int size)
 {
-    unsigned char y;
-    unsigned char x;
-} chessboard_unit_coord;
-
-/**
- * @brief the symbol of unit in chessboard.
- */
-typedef char chessboard_unit_symbol;
-
-/**
- * @brief the unit in chessboard.
- */
-typedef struct _chessboard_unit
-{
-    chessboard_unit_coord coord;
-    chessboard_unit_man man;
-} chessboard_unit;
-
-/**
- * @brief the object of chessboard.
- */
-typedef struct _chessboard_object
-{
-    chessboard_unit **data;
-    unsigned char size;
-} chessboard_object;
-
-/**
- * @brief the chessboard object.
- */
-static chessboard_object chessboard;
-
-int chessboard_initialize(const unsigned char size)
-{
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initializing");
-
-    // the size can not be bigger than CHESSBOARD_MAX_SIZE
-    if (size > CHESSBOARD_MAX_SIZE)
+    if (size < CHESSBOARD_MIN_SIZE || size > CHESSBOARD_MAX_SIZE)
     {
-        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard size is out of range 5-CHESSBOARD_MAX_SIZE");
+        LOG_MESSAGE("[%s:%d] %s([%d-%d])\n", EXTRACT_NAME(__FILE__), __LINE__,
+                    "the size of chessboard is out of range", CHESSBOARD_MIN_SIZE,
+                    CHESSBOARD_MAX_SIZE);
         return -1;
     }
 
-    // the chessboard chessboard has been initialized
     if (NULL != chessboard.data)
     {
-        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard has been initialized");
+        LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__,
+                    "the chessboard has been initialized");
         return -2;
     }
 
-    // malloc the chessboard
-    chessboard.data = malloc(sizeof(chessboard_unit *) * size);
+    chessboard.data = malloc(sizeof(struct _chessboard_unit *) * size);
     if (NULL == chessboard.data)
     {
-        LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard malloc failed");
+        LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__, "malloc failed");
         return -3;
     }
-    for (unsigned char index = 0; index < size; ++index)
+    for (unsigned char index_y = 0; index_y < size; ++index_y)
     {
-        chessboard.data[index] = malloc(sizeof(chessboard_unit) * size);
-        if (NULL == chessboard.data[index])
+        chessboard.data[index_y] = malloc(sizeof(struct _chessboard_unit) * size);
+        if (NULL == chessboard.data[index_y])
         {
-            LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard malloc failed");
+            LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__, "malloc failed");
             return -3;
         }
     }
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard malloc successfully");
 
-    // data initialize
     for (unsigned char index_y = 0; index_y < size; ++index_y)
     {
         for (unsigned char index_x = 0; index_x < size; ++index_x)
         {
-            LOG_MESSAGE("[%s: %d] %s y: %d x: %d\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initialize", index_y, index_x);
             chessboard.data[index_y][index_x].coord.y = index_y;
             chessboard.data[index_y][index_x].coord.x = index_x;
             chessboard.data[index_y][index_x].man = Null;
         }
     }
-
-    // size initialize
     chessboard.size = size;
 
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "chessboard initialize successfully");
-    return 0; // initialize successfully
+    LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__,
+                "chessboard initialize successfully");
+    return 0;
 }
 
 void chessboard_print()
 {
     static char template[TEMPLATE_LENGTH];
-    printf("┌  ");
+
+    printf(" ┌─");
     for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
     {
         printf("%-4d", index_x);
     }
-    printf("x\n");
+    printf("\bx\n");
+
     for (unsigned char index_y = 0; index_y < (chessboard.size * 2 - 1); ++index_y)
     {
         if (1 == index_y % 2)
@@ -122,7 +107,7 @@ void chessboard_print()
         else
         {
             memset(template, '\0', TEMPLATE_LENGTH);
-            printf("%-2d ", index_y / 2);
+            printf("%2d ", index_y / 2);
             if (0 == index_y)
             {
                 for (unsigned char index_x = 0; index_x < chessboard.size; ++index_x)
@@ -336,203 +321,211 @@ void chessboard_print()
             printf("%s", template);
         }
     }
-    printf("y\n");
+    printf(" y\n");
 }
 
-int chessboard_judge_range(const char y, const char x)
+void chessboard_initialize_coord(struct _chessboard_unit_coord *const coord)
 {
-    int return_value = 0;
-    if (y > chessboard.size - 1 || y < 0)
+    coord->y = coord->x = -1;
+}
+
+char chessboard_judge_range(const struct _chessboard_unit_coord *const coord)
+{
+    char return_value = 0;
+    if (coord->y < 0 || coord->y > (chessboard.size - 1))
     {
-        return_value = return_value | (1 << 0);
-        return_value |= (1 << 0);
+        LOG_MESSAGE("[%s:%d] %d %s([%d-%d])\n", EXTRACT_NAME(__FILE__), __LINE__, coord->y,
+                    "is out of range", 0, CHESSBOARD_MAX_SIZE - 1);
+        return_value -= 1;
     }
-    if (x > chessboard.size - 1 || x < 0)
+    if (coord->x < 0 || coord->x > (chessboard.size - 1))
     {
-        return_value |= (1 << 1);
+        LOG_MESSAGE("[%s:%d] %d %s([%d-%d])\n", EXTRACT_NAME(__FILE__), __LINE__, coord->x,
+                    "is out of range", 0, CHESSBOARD_MAX_SIZE - 1);
+        return_value -= 2;
     }
     return return_value;
 }
 
-void chessboard_set_unit(const unsigned char y, const unsigned char x, const chessboard_unit_man man) { chessboard.data[y][x].man = man; }
-
-chessboard_unit_man chessboard_get_unit_man(const unsigned char y, const unsigned char x) { return chessboard.data[y][x].man; }
-
-int chessboard_determine(const unsigned char y, const unsigned char x)
+enum _chessboard_unit_man chessboard_get_unit_man(const struct _chessboard_unit_coord *const coord)
 {
-    chessboard_unit *const base_unit = &(chessboard.data[y][x]);
-    if (Null == base_unit->man)
+    if (0 != chessboard_judge_range(coord))
+    {
+        return -1;
+    }
+    return chessboard.data[coord->y][coord->x].man;
+}
+
+char chessboard_set_unit(const struct _chessboard_unit_coord *const coord,
+                         const enum _chessboard_unit_man man)
+{
+    if (0 != chessboard_judge_range(coord))
     {
         return -1;
     }
 
-    //'\'
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "\\");
+    if (chessboard_get_unit_man(coord) == Null)
+    {
+        chessboard.data[coord->y][coord->x].man = man;
+        return 0;
+    }
+    else if (chessboard_get_unit_man(coord) == man)
+    {
+        return -2;
+    }
+    else
+    {
+        return -3;
+    }
+}
+
+char chessboard_determine(const struct _chessboard_unit_coord *const coord)
+{
+    if (0 != chessboard_judge_range(coord))
+    {
+        return -1;
+    }
+
+    if (Null == chessboard_get_unit_man(coord))
+    {
+        return -2;
+    }
+
+    const enum _chessboard_unit_man base_man = chessboard_get_unit_man(coord);
+
+    /* '\' */
+    LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__, "'\\' model");
     int count = 1;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_y = y - index;
-        int coord_x = x - index;
-        if (coord_y < 0 || coord_x < 0)
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y - index, coord->x - index};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
         else
-        {
             break;
-        }
     }
     for (unsigned char index = 1; index < 5; ++index)
     {
         if (5 == count)
-        {
             return 0;
-        }
-
-        int coord_y = y + index;
-        int coord_x = x + index;
-        if (coord_y > (chessboard.size - 1) || coord_x > (chessboard.size - 1))
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y + index, coord->x + index};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
         else
-        {
             break;
-        }
     }
 
-    //'/'
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "/");
+    /* '/' */
+    LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__, "'/' model");
     count = 1;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_y = y - index;
-        int coord_x = x + index;
-        if (coord_y < 0 || coord_x > (chessboard.size - 1))
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y - index, coord->x + index};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
         else
-        {
             break;
-        }
     }
+    if (count > 4)
+        return 0;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        if (count == 5)
-        {
-            return 0;
-        }
-        int coord_x = x - index;
-        int coord_y = y + index;
-        if (coord_x < 0 || coord_y > (chessboard.size - 1))
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y + index, coord->x - index};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
         else
-        {
             break;
-        }
+        if (count > 4)
+            return 0;
     }
 
-    //"-"
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "-");
+    /* '─' */
+    LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__, "'─' model");
     count = 1;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_y = y;
-        int coord_x = x - index;
-        if (coord_x < 0)
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y, coord->x - index};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
         else
-        {
             break;
-        }
     }
+    if (count > 4)
+        return 0;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_y = y;
-        int coord_x = x + index;
-
-        if (coord_x > chessboard.size - 1)
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y, coord->x + index};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
-        if (count == 5)
-        {
+        else
+            break;
+        if (count > 4)
             return 0;
-        }
     }
 
-    //'|'
-    LOG_MESSAGE("[%s: %d] %s\n", GET_FILE_NAME(__FILE__), __LINE__, "|");
+    /* '|' */
+    LOG_MESSAGE("[%s:%d] %s\n", EXTRACT_NAME(__FILE__), __LINE__, "'|' model");
     count = 1;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_x = x;
-        int coord_y = y - index;
-        LOG_MESSAGE("[%s: %d] %d\n", GET_FILE_NAME(__FILE__), __LINE__, index);
-        if (coord_y < 0)
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y - index, coord->x};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][coord_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
         else
-        {
             break;
-        }
-        if (count == 5)
-        {
-            return 0;
-        }
     }
+    if (count > 4)
+        return 0;
     for (unsigned char index = 1; index < 5; ++index)
     {
-        int coord_y = y + index;
-        int crood_x = x;
-
-        if (coord_y > chessboard.size - 1)
-        {
+        struct _chessboard_unit_coord new_coord = {coord->y + index, coord->x};
+        if (0 != chessboard_judge_range(&new_coord))
             break;
-        }
-        if (chessboard.data[coord_y][crood_x].man == base_unit->man)
+        if (chessboard_get_unit_man(&new_coord) == base_man)
         {
             ++count;
+            LOG_MESSAGE("[%s:%d] %s %d\n", EXTRACT_NAME(__FILE__), __LINE__, "count:", count);
         }
-        if (count == 5)
-        {
+        else
+            break;
+        if (count > 4)
             return 0;
-        }
     }
 
-    return -2;
+    return -3;
 }
