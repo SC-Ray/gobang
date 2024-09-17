@@ -5,6 +5,14 @@
         "system_error": "cpp",
         "debug.h": "c",
         "string": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "compare": "c",
+        "concepts": "c",
+        "type_traits": "c",
+        "cmath": "c",
+        "limits": "c",
+        "new": "c",
+        "array": "c",
+        "string_view": "c"
     }
 }
