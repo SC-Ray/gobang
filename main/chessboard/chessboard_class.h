@@ -40,3 +40,5 @@ typedef struct _chessboard_unit chessboard_unit;
  * @author ProYRB
  */
 typedef struct _chessboard_object chessboard_object;
+
+typedef struct _chessboard_move Move;

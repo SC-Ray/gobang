@@ -28,9 +28,11 @@
  */
 #define TEMPLATE_LENGTH     ((CHESSBOARD_MAX_SIZE - 1) * 4 + 1)
 
+#define MAX_MOVES           1024
+
 /**
  * @brief the static chessboard.
- */
+ */·
 static struct _chessboard_object chessboard = {NULL, 0};
 
 char chessboard_initialize_data(const int size)
@@ -356,8 +358,8 @@ enum _chessboard_unit_man chessboard_get_unit_man(const struct _chessboard_unit_
     return chessboard.data[coord->y][coord->x].man;
 }
 
-char chessboard_set_unit(const struct _chessboard_unit_coord *const coord,
-                         const enum _chessboard_unit_man man)
+char chessboard_set_unit(struct _chessboard_unit_coord *const coord,
+                         conconstst enum _chessboard_unit_man man)
 {
     if (0 != chessboard_judge_range(coord))
     {
@@ -528,4 +530,17 @@ char chessboard_determine(const struct _chessboard_unit_coord *const coord)
     }
 
     return -3;
+}
+
+Move moves[MAX_MOVES];
+int move_count = 0;
+
+void record_move(const struct _chessboard_unit_coord *coord, enum _chessboard_unit_man man)
+{
+    if (move_count < MAX_MOVES)
+    {
+        moves[move_count].coord = *coord;
+        moves[move_count].man = man;
+        move_count++
+    }
 }

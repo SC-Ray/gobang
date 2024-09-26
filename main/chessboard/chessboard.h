@@ -83,3 +83,10 @@ char chessboard_set_unit(const chessboard_unit_coord *const coord, const chessbo
  * @author ProYRB
  */
 char chessboard_determine(const chessboard_unit_coord *const coord);
+
+/**
+ * @brief record location of chess
+ * @param coord the coord of unit.
+ * @param man the enum you want to be set.
+ */
+void record_move(const struct _chessboard_unit_coord *coord, enum _chessboard_unit_man man)

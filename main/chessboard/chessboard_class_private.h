@@ -38,3 +38,9 @@ struct _chessboard_object
     /* the size of the chessboard. */
     int size;
 };
+
+struct _chessboard_move
+{
+    struct _chessboard_unit_coord coord;
+    enum _chessboard_unit_man man;
+};
